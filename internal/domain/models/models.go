@@ -11,3 +11,10 @@ type Task struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	DoneAt      time.Time `json:"done_at"`
 }
+
+type User struct {
+	UID      string `json:"uid"`
+	Name     string `json:"name"`
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
