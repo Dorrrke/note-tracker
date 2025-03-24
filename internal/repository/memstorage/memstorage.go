@@ -7,11 +7,13 @@ import (
 
 type MemStorage struct {
 	tasks map[string]models.Task
+	users map[string]models.User
 }
 
 func New() *MemStorage {
 	return &MemStorage{
 		tasks: make(map[string]models.Task),
+		users: make(map[string]models.User),
 	}
 }
 
@@ -61,4 +63,22 @@ func (m *MemStorage) DeleteTask(id string) error {
 	}
 	delete(m.tasks, id)
 	return nil
+}
+
+func (m *MemStorage) LoginUser(user models.UserRequest) (models.User, error) {
+	for _, us := range m.users {
+		if us.Login == user.Login {
+			return us, nil
+		}
+	}
+	return models.User{}, errors.ErrUserNotFound
+}
+
+func (m *MemStorage) RegisterUser(user models.User) (string, error) {
+	_, ok := m.users[user.UID]
+	if ok {
+		return "", errors.ErrUserAlreadyExists
+	}
+	m.users[user.UID] = user
+	return user.UID, nil
 }
