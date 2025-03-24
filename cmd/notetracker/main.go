@@ -5,6 +5,7 @@ import (
 	"github.com/Dorrrke/note-tracker/internal/config"
 	"github.com/Dorrrke/note-tracker/internal/repository/memstorage"
 	"github.com/Dorrrke/note-tracker/internal/server"
+	"github.com/Dorrrke/note-tracker/internal/service"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
 )
 
@@ -19,8 +20,9 @@ func main() {
 	log.Debug().Str("host", cfg.Host).Int("port", cfg.Port).Send()
 
 	repo := memstorage.New()
-	server := server.New(*cfg, repo)
-
+	userService := service.NewUserService(repo)
+	taskService := service.NewTaskService(repo)
+	server := server.New(*cfg, userService, taskService)
 	app := app.NewApp(*cfg, server, repo)
 
 	if err := app.StartApp(); err != nil {

@@ -2,15 +2,13 @@ package server
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/Dorrrke/note-tracker/internal/domain/models"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func (s *ServerApi) getTasks(c *gin.Context) {
-	tasks, err := s.repo.GetTasks()
+	tasks, err := s.tService.GetTasks()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -25,15 +23,7 @@ func (s *ServerApi) createTask(c *gin.Context) {
 		return
 	}
 
-	task.TID = uuid.New().String()
-
-	now := time.Now()
-
-	task.Stsatus = "pending"
-	task.CreatedAt = now
-	task.UpdatedAt = now
-
-	if err := s.repo.SaveTask(task); err != nil {
+	if err := s.tService.CreateTask(task); err != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
