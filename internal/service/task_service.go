@@ -1,9 +1,8 @@
 package service
 
 import (
-	"time"
-
 	"github.com/Dorrrke/note-tracker/internal/domain/models"
+	"github.com/Dorrrke/note-tracker/pkg/logger"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
@@ -12,6 +11,7 @@ type Repository interface {
 	GetTasks() ([]models.Task, error)
 	GetTask(string) (models.Task, error)
 	SaveTask(models.Task) error
+	SaveTasks([]models.Task) error
 	UpdateTask(models.Task) error
 	DeleteTask(string) error
 
@@ -32,9 +32,6 @@ func NewTaskService(repo Repository) *TaskService {
 func (t *TaskService) CreateTask(task models.Task) error {
 	tID := uuid.New().String()
 	task.TID = tID
-	now := time.Now()
-	task.CreatedAt = now
-	task.UpdatedAt = now
 	err := t.repo.SaveTask(task)
 	if err != nil {
 		return err
@@ -48,4 +45,16 @@ func (t *TaskService) GetTasks() ([]models.Task, error) {
 		return nil, err
 	}
 	return tasks, nil
+}
+
+func (t *TaskService) SaveTasks(tasks []models.Task) error {
+	log := logger.Get()
+	for index := range tasks {
+		tid := uuid.New().String()
+		tasks[index].TID = tid
+	}
+
+	log.Debug().Any("tasks", tasks).Msg("tasks for saving to db")
+
+	return t.repo.SaveTasks(tasks)
 }

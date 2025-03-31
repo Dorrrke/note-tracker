@@ -82,3 +82,7 @@ func (m *MemStorage) RegisterUser(user models.User) error {
 	m.users[user.UID] = user
 	return nil
 }
+
+func (d *MemStorage) SaveTasks(tasks []models.Task) error {
+	panic("unimplemented")
+}

@@ -36,6 +36,7 @@ func (s *ServerApi) configRoutes() {
 	router.POST("/tasks", s.createTask)
 	task := router.Group("/tasks")
 	{
+		task.POST("/save-tasks", s.saveTasks)
 		task.PUT("/:id", func(c *gin.Context) {})
 		task.DELETE("/:id", func(c *gin.Context) {})
 		task.GET("/:id", func(c *gin.Context) {})
