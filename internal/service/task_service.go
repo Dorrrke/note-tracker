@@ -16,7 +16,7 @@ type Repository interface {
 	DeleteTask(string) error
 
 	LoginUser(models.UserRequest) (models.User, error)
-	RegisterUser(models.User) (string, error)
+	RegisterUser(models.User) error
 }
 
 type TaskService struct {

@@ -47,10 +47,10 @@ func (us *UserService) RegisterUser(user models.User) (string, error) {
 	uuid := uuid.New().String()
 	user.UID = uuid
 
-	userID, err := us.repo.RegisterUser(user)
+	err = us.repo.RegisterUser(user)
 	if err != nil {
 		return "", err
 	}
 
-	return userID, nil
+	return uuid, nil
 }
