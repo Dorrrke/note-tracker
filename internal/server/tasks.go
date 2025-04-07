@@ -30,3 +30,16 @@ func (s *ServerApi) createTask(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, task)
 }
+
+func (s *ServerApi) saveTasks(c *gin.Context) {
+	var tasks []models.Task
+	if err := c.ShouldBindBodyWithJSON(&tasks); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := s.tService.SaveTasks(tasks); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, "tasks saved")
+}

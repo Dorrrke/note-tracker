@@ -74,11 +74,15 @@ func (m *MemStorage) LoginUser(user models.UserRequest) (models.User, error) {
 	return models.User{}, errors.ErrUserNotFound
 }
 
-func (m *MemStorage) RegisterUser(user models.User) (string, error) {
+func (m *MemStorage) RegisterUser(user models.User) error {
 	_, ok := m.users[user.UID]
 	if ok {
-		return "", errors.ErrUserAlreadyExists
+		return errors.ErrUserAlreadyExists
 	}
 	m.users[user.UID] = user
-	return user.UID, nil
+	return nil
+}
+
+func (d *MemStorage) SaveTasks(tasks []models.Task) error {
+	panic("unimplemented")
 }
