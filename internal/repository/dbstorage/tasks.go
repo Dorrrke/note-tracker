@@ -24,7 +24,7 @@ func (d *DBStorage) GetTasks() ([]models.Task, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	rows, err := d.db.Query(ctx, "SELECT * FROM tasks")
+	rows, err := d.db.Query(ctx, "SELECT tid, title, description, status, created_at, updated_at FROM tasks")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get tasks from db")
 		return nil, err
@@ -32,7 +32,7 @@ func (d *DBStorage) GetTasks() ([]models.Task, error) {
 	var tasks []models.Task
 	for rows.Next() {
 		var task models.Task
-		if err := rows.Scan(&task.TID, &task.Title, &task.Description, &task.Stsatus, &task.CreatedAt, &task.UpdatedAt, &task.DoneAt); err != nil {
+		if err := rows.Scan(&task.TID, &task.Title, &task.Description, &task.Stsatus, &task.CreatedAt, &task.UpdatedAt); err != nil {
 			log.Error().Err(err).Msg("failed to parse tasks from db")
 			return nil, err
 		}

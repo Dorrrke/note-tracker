@@ -4,10 +4,15 @@ import (
 	"net/http"
 
 	"github.com/Dorrrke/note-tracker/internal/domain/models"
+	"github.com/Dorrrke/note-tracker/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 
 func (s *ServerApi) getTasks(c *gin.Context) {
+	log := logger.Get()
+	uid := c.GetString("uid")
+	log.Debug().Str("uid", uid).Msg("user id from gin context")
+
 	tasks, err := s.tService.GetTasks()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

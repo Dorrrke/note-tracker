@@ -19,6 +19,12 @@ func (s *ServerApi) registerUser(c *gin.Context) {
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
+	token, err := genJwtToken(uid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.Header("Authorization", token)
 	c.JSON(http.StatusCreated, gin.H{"uid": uid})
 }
 
@@ -35,7 +41,12 @@ func (s *ServerApi) loginUser(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("uid", uid, 3600, "/users/login", "", false, true)
+	token, err := genJwtToken(uid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.Header("Authorization", token)
 
 	c.JSON(http.StatusOK, gin.H{"uid": uid})
 }
