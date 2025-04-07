@@ -34,6 +34,10 @@ func New(ctx context.Context, addr string) (*DBStorage, error) {
 	return &DBStorage{db: conn}, nil
 }
 
+func (d *DBStorage) Stop(ctx context.Context) error {
+	return d.db.Close(ctx)
+}
+
 func Migrations(dbDsn string, migratePath string) error {
 	log := logger.Get()
 

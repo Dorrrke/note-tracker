@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/Dorrrke/note-tracker/internal/app"
 	"github.com/Dorrrke/note-tracker/internal/config"
@@ -14,6 +17,16 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
+func gracefulShutdown(cancel context.CancelFunc) {
+	log := logger.Get()
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
+	sig := <-c
+	log.Debug().Str("signal", sig.String()).Msg("received signal")
+	log.Debug().Msg("graceful shutdown")
+	cancel()
+}
+
 func main() {
 	cfg, err := config.ReadConfig()
 	if err != nil {
@@ -21,6 +34,8 @@ func main() {
 	}
 
 	log := logger.Get(cfg.Debug)
+	ctx, cancel := context.WithCancel(context.Background())
+	go gracefulShutdown(cancel)
 	log.Debug().Msg("logger was initialized")
 	log.Debug().Str("host", cfg.Host).Int("port", cfg.Port).Send()
 
@@ -41,7 +56,7 @@ func main() {
 	server := server.New(*cfg, userService, taskService)
 	app := app.NewApp(*cfg, server, repo)
 
-	if err := app.StartApp(); err != nil {
+	if err := app.StartApp(ctx); err != nil {
 		panic(err)
 	}
 }

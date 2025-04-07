@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/Dorrrke/note-tracker/internal/domain/models"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
 	"github.com/go-playground/validator/v10"
@@ -17,6 +19,8 @@ type Repository interface {
 
 	LoginUser(models.UserRequest) (models.User, error)
 	RegisterUser(models.User) error
+
+	Stop(ctx context.Context) error
 }
 
 type TaskService struct {

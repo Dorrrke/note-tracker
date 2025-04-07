@@ -1,6 +1,8 @@
 package memstorage
 
 import (
+	"context"
+
 	"github.com/Dorrrke/note-tracker/internal/domain/errors"
 	"github.com/Dorrrke/note-tracker/internal/domain/models"
 )
@@ -85,4 +87,8 @@ func (m *MemStorage) RegisterUser(user models.User) error {
 
 func (d *MemStorage) SaveTasks(tasks []models.Task) error {
 	panic("unimplemented")
+}
+
+func (d *MemStorage) Stop(ctx context.Context) error {
+	return nil
 }

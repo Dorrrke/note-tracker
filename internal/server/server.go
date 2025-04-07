@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -28,6 +29,11 @@ func New(cfg config.Config, uService *service.UserService, tService *service.Tas
 		uService: uService,
 		tService: tService,
 	}
+}
+
+func (s *ServerApi) Stop(ctx context.Context) error {
+	err := s.server.Shutdown(ctx)
+	return err
 }
 
 func (s *ServerApi) configRoutes() {
