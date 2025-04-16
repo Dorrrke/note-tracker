@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 
-	"github.com/Dorrrke/note-tracker/internal/app"
-	"github.com/Dorrrke/note-tracker/internal/config"
-	"github.com/Dorrrke/note-tracker/internal/repository/dbstorage"
-	"github.com/Dorrrke/note-tracker/internal/repository/memstorage"
-	"github.com/Dorrrke/note-tracker/internal/server"
-	"github.com/Dorrrke/note-tracker/internal/service"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/app"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/config"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/repository/dbstorage"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/repository/memstorage"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/server"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/service"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"

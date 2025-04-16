@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "github.com/Dorrrke/note-tracker/gen/auth";
+
+service AuthService {
+    rpc Login(UserCredentials) returns (AuthResponse);
+    rpc Register(User) returns (AuthResponse);
+}
+
+message UserCredentials {
+    string login = 1;
+    string password = 2;
+}
+
+message User {
+    string name = 1;
+    string login = 2;
+    string password = 3;
+}
+
+
+message AuthResponse {
+    string token = 1;
+    string error = 2;
+}

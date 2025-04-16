@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
-	repoErros "github.com/Dorrrke/note-tracker/internal/domain/errors"
-	"github.com/Dorrrke/note-tracker/internal/domain/models"
+	repoErros "github.com/Dorrrke/note-tracker/internal/note-tracker/domain/errors"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/domain/models"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"

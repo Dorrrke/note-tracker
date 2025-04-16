@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Dorrrke/note-tracker/internal/config"
-	"github.com/Dorrrke/note-tracker/internal/service"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/config"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"

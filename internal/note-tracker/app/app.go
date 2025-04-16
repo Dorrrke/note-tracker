@@ -1,9 +1,9 @@
 package app
 
 import (
-	"github.com/Dorrrke/note-tracker/internal/config"
-	"github.com/Dorrrke/note-tracker/internal/server"
-	"github.com/Dorrrke/note-tracker/internal/service"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/config"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/server"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/service"
 )
 
 type App struct {

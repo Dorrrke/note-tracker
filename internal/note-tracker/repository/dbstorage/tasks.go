@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/Dorrrke/note-tracker/internal/domain/models"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/domain/models"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
 )
 
