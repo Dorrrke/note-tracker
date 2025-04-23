@@ -49,3 +49,27 @@ func (t *TaskService) GetTasks() ([]models.Task, error) {
 	}
 	return tasks, nil
 }
+
+func (t *TaskService) GetTask(id string) (models.Task, error) {
+	task, err := t.repo.GetTask(id)
+	if err != nil {
+		return models.Task{}, err
+	}
+	return task, nil
+}
+
+func (t *TaskService) DeleteTask(id string) error {
+	err := t.repo.DeleteTask(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *TaskService) UpdateTask(task models.Task) error {
+	err := t.repo.UpdateTask(task)
+	if err != nil {
+		return err
+	}
+	return nil
+}
