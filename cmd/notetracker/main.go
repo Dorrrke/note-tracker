@@ -10,8 +10,6 @@ import (
 	"github.com/Dorrrke/note-tracker/internal/note-tracker/server"
 	"github.com/Dorrrke/note-tracker/internal/note-tracker/service"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
@@ -30,10 +28,7 @@ func main() {
 		log.Warn().Err(err).Msg("failed to connect to db, using in-memory storage instead")
 		repo = memstorage.New()
 	} else {
-		if err := dbstorage.Migrations(cfg.DbDsn, cfg.MigratePath); err != nil {
-			log.Warn().Err(err).Msg("failed to connect to db, using in-memory storage instead")
-			repo = memstorage.New()
-		}
+		repo = memstorage.New()
 	}
 
 	userService := service.NewUserService(repo)

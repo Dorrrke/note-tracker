@@ -1,0 +1,54 @@
+package config
+
+import (
+	"cmp"
+	"flag"
+	"os"
+	"strconv"
+)
+
+type Config struct {
+	Host        string
+	Port        int
+	DBDsn       string
+	MigratePath string
+}
+
+const (
+	defaultPort        = 9090
+	defaultHost        = "0.0.0.0"
+	defaultDbDst       = "postgres://user:password@localhost:5432/gt5?sslmode=disable"
+	defaultMigratePath = "migrations"
+)
+
+func ReadConfig() (*Config, error) {
+	var cfg Config
+
+	flag.StringVar(&cfg.Host, "host", defaultHost, "flag for explicit server host specifications")
+	flag.IntVar(&cfg.Port, "port", defaultPort, "flag for explicit server port specifications")
+	flag.StringVar(&cfg.DBDsn, "db", defaultDbDst, "flag for explicit db connection string")
+	flag.StringVar(&cfg.MigratePath, "migrate", defaultMigratePath, "flag for explicit migrate path")
+
+	flag.Parse()
+
+	if cfg.Host == "localhost" {
+		cfg.Host = cmp.Or(os.Getenv("HOST"), cfg.Host)
+	}
+	if cfg.Port == 8080 {
+		defPort := strconv.Itoa(cfg.Port)
+		envPort := cmp.Or(os.Getenv("PORT"), defPort)
+		port, err := strconv.Atoi(envPort)
+		if err != nil {
+			return nil, err
+		}
+		cfg.Port = port
+	}
+	if cfg.DBDsn == defaultDbDst {
+		cfg.DBDsn = cmp.Or(os.Getenv("DB_DSN"), cfg.DBDsn)
+	}
+	if cfg.MigratePath == defaultMigratePath {
+		cfg.MigratePath = cmp.Or(os.Getenv("MIGRATE_PATH"), cfg.MigratePath)
+	}
+
+	return &cfg, nil
+}

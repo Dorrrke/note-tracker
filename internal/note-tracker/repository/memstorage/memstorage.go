@@ -1,8 +1,8 @@
 package memstorage
 
 import (
-	"github.com/Dorrrke/note-tracker/internal/domain/errors"
-	"github.com/Dorrrke/note-tracker/internal/domain/models"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/domain/errors"
+	"github.com/Dorrrke/note-tracker/internal/note-tracker/domain/models"
 )
 
 type MemStorage struct {

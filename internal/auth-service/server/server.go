@@ -18,6 +18,7 @@ var jwtKey = []byte("super_secret_key_1285@ggwg")
 
 type Repository interface {
 	LoginUser(userCreds models.UserCreds) (models.User, error)
+	RegisterUser(user models.User) (string, error)
 }
 
 type GRPCServer struct {
@@ -25,8 +26,8 @@ type GRPCServer struct {
 	repo Repository
 }
 
-func RegisterGrpcServer(gRPC *grpc.Server) {
-	auth.RegisterAuthServiceServer(gRPC, &GRPCServer{})
+func RegisterGrpcServer(gRPC *grpc.Server, repo Repository) {
+	auth.RegisterAuthServiceServer(gRPC, &GRPCServer{repo: repo})
 }
 
 func (g *GRPCServer) Login(
@@ -61,7 +62,27 @@ func (g *GRPCServer) Register(
 	ctx context.Context,
 	req *auth.User,
 ) (*auth.AuthResponse, error) {
-	return nil, nil
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.GetPassword()), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	user := models.User{
+		Name:     req.GetName(),
+		Login:    req.GetLogin(),
+		Password: string(hash),
+	}
+
+	uid, err := g.repo.RegisterUser(user)
+	if err != nil {
+		return nil, status.Error(codes.AlreadyExists, err.Error())
+	}
+
+	token, err := genJwtToken(uid)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	return &auth.AuthResponse{Token: token}, nil
 }
 
 func genJwtToken(uid string) (string, error) {
