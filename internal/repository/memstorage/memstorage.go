@@ -75,10 +75,49 @@ func (m *MemStorage) LoginUser(user models.UserRequest) (models.User, error) {
 }
 
 func (m *MemStorage) RegisterUser(user models.User) (string, error) {
-	_, ok := m.users[user.UID]
-	if ok {
-		return "", errors.ErrUserAlreadyExists
+	for _, usr := range m.users {
+		if usr.Login == user.Login {
+			return "", errors.ErrUserAlreadyExists
+		}
 	}
 	m.users[user.UID] = user
 	return user.UID, nil
+}
+
+func (m *MemStorage) GetUsers() ([]models.User, error) {
+	var users []models.User
+	if len(m.users) == 0 {
+		return nil, errors.ErrEmptyUsersList
+	}
+	for id, user := range m.users {
+		user.UID = id
+		users = append(users, user)
+	}
+	return users, nil
+}
+
+func (m *MemStorage) GetUser(id string) (models.User, error) {
+	task, ok := m.users[id]
+	if !ok {
+		return models.User{}, errors.ErrUserNotFound
+	}
+	return task, nil
+}
+
+func (m *MemStorage) DeleteUser(id string) error {
+	_, ok := m.users[id]
+	if !ok {
+		return errors.ErrUserNotFound
+	}
+	delete(m.users, id)
+	return nil
+}
+
+func (m *MemStorage) UpdateUser(user models.User) error {
+	_, ok := m.users[user.UID]
+	if !ok {
+		return errors.ErrUserNotFound
+	}
+	m.users[user.UID] = user
+	return nil
 }

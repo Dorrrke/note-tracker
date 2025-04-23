@@ -8,3 +8,4 @@ var ErrTaskAlreadyExists = errors.New("task already exists")
 
 var ErrUserNotFound = errors.New("user not found")
 var ErrUserAlreadyExists = errors.New("user already exists")
+var ErrEmptyUsersList = errors.New("empty users list")

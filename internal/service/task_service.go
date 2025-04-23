@@ -17,6 +17,10 @@ type Repository interface {
 
 	LoginUser(models.UserRequest) (models.User, error)
 	RegisterUser(models.User) (string, error)
+	GetUsers() ([]models.User, error)
+	GetUser(string) (models.User, error)
+	DeleteUser(string) error
+	UpdateUser(models.User) error
 }
 
 type TaskService struct {
