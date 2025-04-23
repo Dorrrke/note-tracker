@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Dorrrke/note-tracker/gen/auth"
 	"github.com/Dorrrke/note-tracker/internal/note-tracker/config"
 	"github.com/Dorrrke/note-tracker/internal/note-tracker/service"
 
@@ -13,17 +14,19 @@ import (
 
 type ServerApi struct {
 	server   *http.Server
+	auth     auth.AuthServiceClient
 	valid    *validator.Validate
 	uService *service.UserService
 	tService *service.TaskService
 }
 
-func New(cfg config.Config, uService *service.UserService, tService *service.TaskService) *ServerApi {
+func New(cfg config.Config, uService *service.UserService, tService *service.TaskService, authClient auth.AuthServiceClient) *ServerApi {
 	server := http.Server{
 		Addr: fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
 	}
 	return &ServerApi{
 		server:   &server,
+		auth:     authClient,
 		valid:    validator.New(),
 		uService: uService,
 		tService: tService,

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/Dorrrke/note-tracker/gen/auth"
 	"github.com/Dorrrke/note-tracker/internal/note-tracker/app"
 	"github.com/Dorrrke/note-tracker/internal/note-tracker/config"
 	"github.com/Dorrrke/note-tracker/internal/note-tracker/repository/dbstorage"
@@ -10,6 +11,8 @@ import (
 	"github.com/Dorrrke/note-tracker/internal/note-tracker/server"
 	"github.com/Dorrrke/note-tracker/internal/note-tracker/service"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -31,9 +34,16 @@ func main() {
 		repo = memstorage.New()
 	}
 
+	conn, err := grpc.NewClient(cfg.AuthHost, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to create grpc client")
+	}
+
+	client := auth.NewAuthServiceClient(conn)
+
 	userService := service.NewUserService(repo)
 	taskService := service.NewTaskService(repo)
-	server := server.New(*cfg, userService, taskService)
+	server := server.New(*cfg, userService, taskService, client)
 	app := app.NewApp(*cfg, server, repo)
 
 	if err := app.StartApp(); err != nil {

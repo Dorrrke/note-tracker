@@ -8,14 +8,29 @@ services:
     ports:
       - "5432:5432"
   
-  # app:
-    # build: .
-    # environment:
-    #   - MIGRATE_PATH=migrations
-    #   - DB_DSN=postgres://user:password@db:5432/gt5?sslmode=disable
-    # ports:
-    #   - "8080:8080"
-    # volumes:
-    #   - ./migrations:/root/migrations
-    # depends_on:
-    #   - db
+  auth:
+    build:
+      context: .
+      dockerfile: auth.Dockerfile
+    environment:
+      - MIGRATE_PATH=migrations
+      - DB_DSN=postgres://user:password@db:5432/gt5?sslmode=disable
+    volumes:
+      - ./migrations:/root/migrations
+    ports:
+      - "9090:9090"
+    depends_on:
+      - db
+      
+  app:
+    build:
+      context: .
+      dockerfile: tracker.Dockerfile
+    environment:
+      - DB_DSN=postgres://user:password@db:5432/gt5?sslmode=disable
+      - AUTH_HOST=auth:9090
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - auth

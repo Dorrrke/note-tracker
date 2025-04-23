@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/Dorrrke/note-tracker/gen/auth"
@@ -95,20 +94,4 @@ func genJwtToken(uid string) (string, error) {
 		return ``, err
 	}
 	return tokenStr, nil
-}
-
-func validateJwtToken(tokenStr string) (string, error) {
-	claims := jwt.RegisteredClaims{}
-	token, err := jwt.ParseWithClaims(tokenStr, &claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(jwtKey), nil
-	})
-	if err != nil {
-		return ``, err
-	}
-
-	if !token.Valid {
-		return ``, fmt.Errorf("invalid token")
-	}
-
-	return claims.Subject, nil
 }

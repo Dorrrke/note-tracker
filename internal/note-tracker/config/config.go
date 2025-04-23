@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Host        string
 	Port        int
+	AuthHost    string
 	DbDsn       string
 	MigratePath string
 	Debug       bool
@@ -19,6 +20,7 @@ const (
 	defaultPort        = 8080
 	defaultHost        = "0.0.0.0"
 	defaultDbDst       = "postgres://user:password@localhost:5432/gt5?sslmode=disable"
+	defaultAuthHost    = "localhost:9090"
 	defaultMigratePath = "migrations"
 )
 
@@ -52,5 +54,6 @@ func ReadConfig() (*Config, error) {
 		cfg.MigratePath = cmp.Or(os.Getenv("MIGRATE_PATH"), cfg.MigratePath)
 	}
 
+	cfg.AuthHost = cmp.Or(os.Getenv("AUTH_HOST"), defaultAuthHost)
 	return &cfg, nil
 }
