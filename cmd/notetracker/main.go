@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -18,7 +19,7 @@ import (
 func main() {
 	cfg, err := config.ReadConfig()
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed read config: %w", err))
 	}
 
 	log := logger.Get(cfg.Debug)
