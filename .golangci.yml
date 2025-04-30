@@ -16,29 +16,6 @@ issues:
   # Maximum count of issues with the same text.
   # Set to 0 to disable.
   # Default: 3
-  exclude-rules:
-    - path: "_test\\.go"
-      linters:
-        - bodyclose
-        - dupl
-        - funlen
-        - goconst
-        - gosec
-        - noctx
-        - wrapcheck
-  exclude-dirs:
-    - swagger-ui
-    - docs
-    - templates
-    - migrations
-    - \.go
-    - db
-    - logger.go
-    - mock
-    - config
-    - tepmdir
-    - \.proto
-    - certs  
   max-same-issues: 50
 
 formatters:
