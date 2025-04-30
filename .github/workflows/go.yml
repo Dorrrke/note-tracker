@@ -23,3 +23,14 @@ jobs:
         version: v2.1.5
         args: --timeout 3m --config .golangci.yml
 
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23'
+    - name: Test
+      run: go test -v ./...
+
