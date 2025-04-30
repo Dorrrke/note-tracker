@@ -36,7 +36,15 @@ func (d *DBStorage) GetTask(id string) (models.Task, error) {
 	defer cancel()
 	var task models.Task
 	row := d.db.QueryRow(ctx, "SELECT * FROM tasks WHERE tid = $1", id)
-	err := row.Scan(&task.TID, &task.Title, &task.Description, &task.Stsatus, &task.CreatedAt, &task.UpdatedAt, &task.DoneAt)
+	err := row.Scan(
+		&task.TID,
+		&task.Title,
+		&task.Description,
+		&task.Stsatus,
+		&task.CreatedAt,
+		&task.UpdatedAt,
+		&task.DoneAt,
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get task from db")
 		return models.Task{}, err

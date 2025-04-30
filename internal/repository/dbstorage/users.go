@@ -35,7 +35,14 @@ func (d *DBStorage) RegisterUser(user models.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 
-	_, err := d.db.Exec(ctx, "INSERT INTO users (uid, name, login, password) VALUES ($1, $2, $3, $4)", user.UID, user.Name, user.Login, user.Password)
+	_, err := d.db.Exec(
+		ctx,
+		"INSERT INTO users (uid, name, login, password) VALUES ($1, $2, $3, $4)",
+		user.UID,
+		user.Name,
+		user.Login,
+		user.Password,
+	)
 	if err != nil {
 		log.Debug().Any("err", err).Str("error", err.Error()).Msg("error form pgx.Exec")
 		var pgErr *pgconn.PgError
