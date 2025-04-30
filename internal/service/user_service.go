@@ -1,10 +1,11 @@
 package service
 
 import (
-	"github.com/Dorrrke/note-tracker/internal/domain/models"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/Dorrrke/note-tracker/internal/domain/models"
 )
 
 type UserService struct {

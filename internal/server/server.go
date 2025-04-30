@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/Dorrrke/note-tracker/internal/config"
 	"github.com/Dorrrke/note-tracker/internal/service"
@@ -11,18 +12,21 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type ServerApi struct {
+const rdTimeout = 15 * time.Second
+
+type API struct {
 	server   *http.Server
 	valid    *validator.Validate
 	uService *service.UserService
 	tService *service.TaskService
 }
 
-func New(cfg config.Config, uService *service.UserService, tService *service.TaskService) *ServerApi {
+func New(cfg config.Config, uService *service.UserService, tService *service.TaskService) *API {
 	server := http.Server{
-		Addr: fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		Addr:              fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		ReadHeaderTimeout: rdTimeout,
 	}
-	return &ServerApi{
+	return &API{
 		server:   &server,
 		valid:    validator.New(),
 		uService: uService,
@@ -30,16 +34,16 @@ func New(cfg config.Config, uService *service.UserService, tService *service.Tas
 	}
 }
 
-func (s *ServerApi) configRoutes() {
+func (s *API) configRoutes() {
 	router := gin.Default()
 	router.GET("/tasks", s.getTasks)
 	router.POST("/tasks", s.createTask)
 	task := router.Group("/tasks")
 	{
 		task.POST("/save-tasks", s.saveTasks)
-		task.PUT("/:id", func(c *gin.Context) {})
-		task.DELETE("/:id", func(c *gin.Context) {})
-		task.GET("/:id", func(c *gin.Context) {})
+		task.PUT("/:id", func(_ *gin.Context) {})
+		task.DELETE("/:id", func(_ *gin.Context) {})
+		task.GET("/:id", func(_ *gin.Context) {})
 	}
 	users := router.Group("/users")
 	{
@@ -49,7 +53,7 @@ func (s *ServerApi) configRoutes() {
 	s.server.Handler = router
 }
 
-func (s *ServerApi) Start() error {
+func (s *API) Start() error {
 	s.configRoutes()
 	// log := logger.Get()
 	// log.Info().Str("server address", s.server.Addr).Msg("server was started")

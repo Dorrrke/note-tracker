@@ -4,22 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/Dorrrke/note-tracker/pkg/logger"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/jackc/pgx/v5"
+
+	"github.com/Dorrrke/note-tracker/pkg/logger"
 )
 
-// type Repository interface {
-// 	GetTasks() ([]models.Task, error)
-// 	GetTask(string) (models.Task, error)
-// 	SaveTask(models.Task) error
-// 	UpdateTask(models.Task) error
-// 	DeleteTask(string) error
-
-// 	LoginUser(models.UserRequest) (models.User, error)
-// 	RegisterUser(models.User) (string, error)
-// }
+const ctxTimeout = 5 * time.Second
 
 type DBStorage struct {
 	db *pgx.Conn
@@ -44,7 +37,7 @@ func Migrations(dbDsn string, migratePath string) error {
 		return fmt.Errorf("failed to create migrate instance: %w", err)
 	}
 
-	if err := m.Up(); err != nil {
+	if err = m.Up(); err != nil {
 		if errors.Is(err, migrate.ErrNoChange) {
 			log.Debug().Msg("no migrations were applied")
 			return nil

@@ -1,10 +1,11 @@
 package service
 
 import (
-	"github.com/Dorrrke/note-tracker/internal/domain/models"
-	"github.com/Dorrrke/note-tracker/pkg/logger"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
+
+	"github.com/Dorrrke/note-tracker/internal/domain/models"
+	"github.com/Dorrrke/note-tracker/pkg/logger"
 )
 
 type Repository interface {

@@ -3,19 +3,19 @@ package dbstorage
 import (
 	"context"
 	"errors"
-	"time"
+
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	repoErros "github.com/Dorrrke/note-tracker/internal/domain/errors"
 	"github.com/Dorrrke/note-tracker/internal/domain/models"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
-	"github.com/jackc/pgerrcode"
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func (d *DBStorage) LoginUser(user models.UserRequest) (models.User, error) {
 	log := logger.Get()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 
 	var dbUser models.User
@@ -32,7 +32,7 @@ func (d *DBStorage) LoginUser(user models.UserRequest) (models.User, error) {
 
 func (d *DBStorage) RegisterUser(user models.User) error {
 	log := logger.Get()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 
 	_, err := d.db.Exec(ctx, "INSERT INTO users (uid, name, login, password) VALUES ($1, $2, $3, $4)", user.UID, user.Name, user.Login, user.Password)

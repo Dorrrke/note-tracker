@@ -3,11 +3,14 @@ package server
 import (
 	"net/http"
 
-	"github.com/Dorrrke/note-tracker/internal/domain/models"
 	"github.com/gin-gonic/gin"
+
+	"github.com/Dorrrke/note-tracker/internal/domain/models"
 )
 
-func (s *ServerApi) registerUser(c *gin.Context) {
+const cookieTimeout = 3600
+
+func (s *API) registerUser(c *gin.Context) {
 	var user models.User
 	err := c.ShouldBindBodyWithJSON(&user)
 	if err != nil {
@@ -22,7 +25,7 @@ func (s *ServerApi) registerUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"uid": uid})
 }
 
-func (s *ServerApi) loginUser(c *gin.Context) {
+func (s *API) loginUser(c *gin.Context) {
 	var user models.UserRequest
 	err := c.ShouldBindBodyWithJSON(&user)
 	if err != nil {
@@ -35,7 +38,7 @@ func (s *ServerApi) loginUser(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("uid", uid, 3600, "/users/login", "", false, true)
+	c.SetCookie("uid", uid, cookieTimeout, "/users/login", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"uid": uid})
 }

@@ -3,11 +3,12 @@ package server
 import (
 	"net/http"
 
-	"github.com/Dorrrke/note-tracker/internal/domain/models"
 	"github.com/gin-gonic/gin"
+
+	"github.com/Dorrrke/note-tracker/internal/domain/models"
 )
 
-func (s *ServerApi) getTasks(c *gin.Context) {
+func (s *API) getTasks(c *gin.Context) {
 	tasks, err := s.tService.GetTasks()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -16,7 +17,7 @@ func (s *ServerApi) getTasks(c *gin.Context) {
 	c.JSON(http.StatusOK, tasks)
 }
 
-func (s *ServerApi) createTask(c *gin.Context) {
+func (s *API) createTask(c *gin.Context) {
 	var task models.Task
 	if err := c.ShouldBindBodyWithJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -31,7 +32,7 @@ func (s *ServerApi) createTask(c *gin.Context) {
 	c.JSON(http.StatusCreated, task)
 }
 
-func (s *ServerApi) saveTasks(c *gin.Context) {
+func (s *API) saveTasks(c *gin.Context) {
 	var tasks []models.Task
 	if err := c.ShouldBindBodyWithJSON(&tasks); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

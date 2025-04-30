@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+
 	"github.com/Dorrrke/note-tracker/internal/app"
 	"github.com/Dorrrke/note-tracker/internal/config"
 	"github.com/Dorrrke/note-tracker/internal/repository/dbstorage"
@@ -10,8 +13,6 @@ import (
 	"github.com/Dorrrke/note-tracker/internal/server"
 	"github.com/Dorrrke/note-tracker/internal/service"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
@@ -25,12 +26,12 @@ func main() {
 	log.Debug().Str("host", cfg.Host).Int("port", cfg.Port).Send()
 
 	var repo service.Repository
-	repo, err = dbstorage.New(context.Background(), cfg.DbDsn)
+	repo, err = dbstorage.New(context.Background(), cfg.DBDsn)
 	if err != nil {
 		log.Warn().Err(err).Msg("failed to connect to db, using in-memory storage instead")
 		repo = memstorage.New()
 	} else {
-		if err := dbstorage.Migrations(cfg.DbDsn, cfg.MigratePath); err != nil {
+		if err = dbstorage.Migrations(cfg.DBDsn, cfg.MigratePath); err != nil {
 			log.Warn().Err(err).Msg("failed to connect to db, using in-memory storage instead")
 			repo = memstorage.New()
 		}
@@ -41,7 +42,7 @@ func main() {
 	server := server.New(*cfg, userService, taskService)
 	app := app.NewApp(*cfg, server, repo)
 
-	if err := app.StartApp(); err != nil {
+	if err = app.StartApp(); err != nil {
 		panic(err)
 	}
 }
