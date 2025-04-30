@@ -10,7 +10,7 @@ import (
 type Config struct {
 	Host        string
 	Port        int
-	DbDsn       string
+	DBDsn       string
 	MigratePath string
 	Debug       bool
 }
@@ -18,7 +18,7 @@ type Config struct {
 const (
 	defaultPort        = 8080
 	defaultHost        = "0.0.0.0"
-	defaultDbDst       = "postgres://user:password@localhost:5432/gt5?sslmode=disable"
+	defaultDBDst       = "postgres://user:password@localhost:5432/gt5?sslmode=disable"
 	defaultMigratePath = "migrations"
 )
 
@@ -27,7 +27,7 @@ func ReadConfig() (*Config, error) {
 
 	flag.StringVar(&cfg.Host, "host", defaultHost, "flag for explicit server host specifications")
 	flag.IntVar(&cfg.Port, "port", defaultPort, "flag for explicit server port specifications")
-	flag.StringVar(&cfg.DbDsn, "db", defaultDbDst, "flag for explicit db connection string")
+	flag.StringVar(&cfg.DBDsn, "db", defaultDBDst, "flag for explicit db connection string")
 	flag.StringVar(&cfg.MigratePath, "migrate", defaultMigratePath, "flag for explicit migrate path")
 	flag.BoolVar(&cfg.Debug, "debug", false, "flag for explicit debug mode")
 
@@ -36,7 +36,7 @@ func ReadConfig() (*Config, error) {
 	if cfg.Host == "localhost" {
 		cfg.Host = cmp.Or(os.Getenv("HOST"), cfg.Host)
 	}
-	if cfg.Port == 8080 {
+	if cfg.Port == defaultPort {
 		defPort := strconv.Itoa(cfg.Port)
 		envPort := cmp.Or(os.Getenv("PORT"), defPort)
 		port, err := strconv.Atoi(envPort)
@@ -45,8 +45,8 @@ func ReadConfig() (*Config, error) {
 		}
 		cfg.Port = port
 	}
-	if cfg.DbDsn == defaultDbDst {
-		cfg.DbDsn = cmp.Or(os.Getenv("DB_DSN"), cfg.DbDsn)
+	if cfg.DBDsn == defaultDBDst {
+		cfg.DBDsn = cmp.Or(os.Getenv("DB_DSN"), cfg.DBDsn)
 	}
 	if cfg.MigratePath == defaultMigratePath {
 		cfg.MigratePath = cmp.Or(os.Getenv("MIGRATE_PATH"), cfg.MigratePath)

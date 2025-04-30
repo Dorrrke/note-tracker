@@ -2,26 +2,14 @@ package dbstorage
 
 import (
 	"context"
-	"time"
 
 	"github.com/Dorrrke/note-tracker/internal/domain/models"
 	"github.com/Dorrrke/note-tracker/pkg/logger"
 )
 
-// type Repository interface {
-// 	GetTasks() ([]models.Task, error)
-// 	GetTask(string) (models.Task, error)
-// 	SaveTask(models.Task) error
-// 	UpdateTask(models.Task) error
-// 	DeleteTask(string) error
-
-// 	LoginUser(models.UserRequest) (models.User, error)
-// 	RegisterUser(models.User) (string, error)
-// }
-
 func (d *DBStorage) GetTasks() ([]models.Task, error) {
 	log := logger.Get()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 
 	rows, err := d.db.Query(ctx, "SELECT * FROM tasks")
@@ -32,7 +20,7 @@ func (d *DBStorage) GetTasks() ([]models.Task, error) {
 	var tasks []models.Task
 	for rows.Next() {
 		var task models.Task
-		if err := rows.Scan(&task.TID, &task.Title, &task.Description, &task.Stsatus, &task.CreatedAt, &task.UpdatedAt, &task.DoneAt); err != nil {
+		if err = rows.Scan(&task.TID, &task.Title, &task.Description, &task.Stsatus, &task.CreatedAt, &task.UpdatedAt, &task.DoneAt); err != nil {
 			log.Error().Err(err).Msg("failed to parse tasks from db")
 			return nil, err
 		}
@@ -44,11 +32,19 @@ func (d *DBStorage) GetTasks() ([]models.Task, error) {
 
 func (d *DBStorage) GetTask(id string) (models.Task, error) {
 	log := logger.Get()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 	var task models.Task
 	row := d.db.QueryRow(ctx, "SELECT * FROM tasks WHERE tid = $1", id)
-	err := row.Scan(&task.TID, &task.Title, &task.Description, &task.Stsatus, &task.CreatedAt, &task.UpdatedAt, &task.DoneAt)
+	err := row.Scan(
+		&task.TID,
+		&task.Title,
+		&task.Description,
+		&task.Stsatus,
+		&task.CreatedAt,
+		&task.UpdatedAt,
+		&task.DoneAt,
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get task from db")
 		return models.Task{}, err
@@ -59,7 +55,7 @@ func (d *DBStorage) GetTask(id string) (models.Task, error) {
 
 func (d *DBStorage) SaveTask(task models.Task) error {
 	log := logger.Get()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 
 	_, err := d.db.Exec(ctx, "INSERT INTO tasks (tid, title, description, status) VALUES ($1, $2, $3, $4)",
@@ -74,7 +70,7 @@ func (d *DBStorage) SaveTask(task models.Task) error {
 
 func (d *DBStorage) SaveTasks(tasks []models.Task) error {
 	log := logger.Get()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 
 	tx, err := d.db.Begin(ctx)
@@ -83,7 +79,7 @@ func (d *DBStorage) SaveTasks(tasks []models.Task) error {
 		return err
 	}
 	defer func() {
-		if err := tx.Rollback(ctx); err != nil {
+		if err = tx.Rollback(ctx); err != nil {
 			log.Debug().Err(err).Msg("failed to rollback transaction")
 		}
 	}()
@@ -95,7 +91,7 @@ func (d *DBStorage) SaveTasks(tasks []models.Task) error {
 	}
 
 	for _, task := range tasks {
-		_, err := tx.Exec(ctx, "save_task", task.TID, task.Title, task.Description, task.Stsatus)
+		_, err = tx.Exec(ctx, "save_task", task.TID, task.Title, task.Description, task.Stsatus)
 		if err != nil {
 			log.Error().Err(err).Msg("failed to save task to db")
 			return err
@@ -105,10 +101,10 @@ func (d *DBStorage) SaveTasks(tasks []models.Task) error {
 	return tx.Commit(ctx)
 }
 
-func (d *DBStorage) UpdateTask(task models.Task) error {
+func (d *DBStorage) UpdateTask(_ models.Task) error {
 	panic("unimplemented")
 }
 
-func (d *DBStorage) DeleteTask(id string) error {
+func (d *DBStorage) DeleteTask(_ string) error {
 	panic("unimplemented")
 }

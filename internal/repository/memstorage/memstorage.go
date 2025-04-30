@@ -83,6 +83,6 @@ func (m *MemStorage) RegisterUser(user models.User) error {
 	return nil
 }
 
-func (d *MemStorage) SaveTasks(tasks []models.Task) error {
+func (m *MemStorage) SaveTasks(_ []models.Task) error {
 	panic("unimplemented")
 }
