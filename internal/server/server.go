@@ -31,17 +31,28 @@ func New(cfg config.Config, uService *service.UserService, tService *service.Tas
 }
 
 func (s *ServerApi) configRoutes() {
+	// Task routers
 	router := gin.Default()
 	router.GET("/tasks", s.getTasks)
 	router.POST("/tasks", s.createTask)
 	task := router.Group("/tasks")
 	{
-		task.PUT("/:id", func(c *gin.Context) {})
-		task.DELETE("/:id", func(c *gin.Context) {})
-		task.GET("/:id", func(c *gin.Context) {})
+		task.PUT("/:id", s.updateTaskByID)
+		task.DELETE("/:id", s.deleteTaskByID)
+		task.GET("/:id", s.getTaskByID)
 	}
+
+	// User routers
+	router.GET("/users", s.getUsers)
+	router.POST("/users", s.createUser)
 	users := router.Group("/users")
 	{
+		users.PUT("/:id", s.updateUserByID)
+		users.DELETE("/:id", s.deleteUserByID)
+		users.GET("/:id", s.getUserById)
+
+		users.GET("/profile", s.getUserProfile)
+
 		users.POST("/register", s.registerUser)
 		users.POST("/login", s.loginUser)
 	}

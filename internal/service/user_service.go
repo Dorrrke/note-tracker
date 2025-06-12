@@ -54,3 +54,63 @@ func (us *UserService) RegisterUser(user models.User) (string, error) {
 
 	return userID, nil
 }
+
+func (us *UserService) GetUsers() ([]models.User, error) {
+	users, err := us.repo.GetUsers()
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func (u *UserService) GetUser(id string) (models.User, error) {
+	user, err := u.repo.GetUser(id)
+	if err != nil {
+		return models.User{}, err
+	}
+	return user, nil
+}
+
+func (u *UserService) CreateUser(user models.User) (string, error) {
+	if err := u.valid.Struct(user); err != nil {
+		return "", err
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	user.Password = string(hash)
+
+	uuid := uuid.New().String()
+	user.UID = uuid
+
+	userID, err := u.repo.RegisterUser(user)
+	if err != nil {
+		return "", err
+	}
+
+	return userID, nil
+}
+
+func (u *UserService) DeleteUser(id string) error {
+	err := u.repo.DeleteUser(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *UserService) UpdateUser(user models.User) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(hash)
+
+	err = u.repo.UpdateUser(user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
