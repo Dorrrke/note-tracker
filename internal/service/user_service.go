@@ -63,16 +63,16 @@ func (us *UserService) GetUsers() ([]models.User, error) {
 	return users, nil
 }
 
-func (u *UserService) GetUser(id string) (models.User, error) {
-	user, err := u.repo.GetUser(id)
+func (us *UserService) GetUser(id string) (models.User, error) {
+	user, err := us.repo.GetUser(id)
 	if err != nil {
 		return models.User{}, err
 	}
 	return user, nil
 }
 
-func (u *UserService) CreateUser(user models.User) (string, error) {
-	if err := u.valid.Struct(user); err != nil {
+func (us *UserService) CreateUser(user models.User) (string, error) {
+	if err := us.valid.Struct(user); err != nil {
 		return "", err
 	}
 
@@ -85,7 +85,7 @@ func (u *UserService) CreateUser(user models.User) (string, error) {
 	uuid := uuid.New().String()
 	user.UID = uuid
 
-	userID, err := u.repo.RegisterUser(user)
+	userID, err := us.repo.RegisterUser(user)
 	if err != nil {
 		return "", err
 	}
@@ -93,22 +93,22 @@ func (u *UserService) CreateUser(user models.User) (string, error) {
 	return userID, nil
 }
 
-func (u *UserService) DeleteUser(id string) error {
-	err := u.repo.DeleteUser(id)
+func (us *UserService) DeleteUser(id string) error {
+	err := us.repo.DeleteUser(id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *UserService) UpdateUser(user models.User) error {
+func (us *UserService) UpdateUser(user models.User) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 	user.Password = string(hash)
 
-	err = u.repo.UpdateUser(user)
+	err = us.repo.UpdateUser(user)
 	if err != nil {
 		return err
 	}

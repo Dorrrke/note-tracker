@@ -7,7 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *ServerApi) registerUser(c *gin.Context) {
+const cookieMaxAge = 3600
+
+func (s *API) registerUser(c *gin.Context) {
 	var user models.User
 	err := c.ShouldBindBodyWithJSON(&user)
 	if err != nil {
@@ -22,7 +24,7 @@ func (s *ServerApi) registerUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"uid": uid})
 }
 
-func (s *ServerApi) loginUser(c *gin.Context) {
+func (s *API) loginUser(c *gin.Context) {
 	var user models.UserRequest
 	err := c.ShouldBindBodyWithJSON(&user)
 	if err != nil {
@@ -35,12 +37,12 @@ func (s *ServerApi) loginUser(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("uid", uid, 3600, "/users/login", "", false, true)
+	c.SetCookie("uid", uid, cookieMaxAge, "/users/login", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"uid": uid})
 }
 
-func (s *ServerApi) getUsers(c *gin.Context) {
+func (s *API) getUsers(c *gin.Context) {
 	users, err := s.uService.GetUsers()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -49,7 +51,7 @@ func (s *ServerApi) getUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-func (s *ServerApi) getUserById(c *gin.Context) {
+func (s *API) getUserByID(c *gin.Context) {
 	id := c.Param("id")
 	user, err := s.uService.GetUser(id)
 	if err != nil {
@@ -59,11 +61,11 @@ func (s *ServerApi) getUserById(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-func (s *ServerApi) getUserProfile(c *gin.Context) {
+func (s *API) getUserProfile(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{"error": "functionality comming soon"})
 }
 
-func (s *ServerApi) createUser(c *gin.Context) {
+func (s *API) createUser(c *gin.Context) {
 	var user models.User
 	err := c.ShouldBindBodyWithJSON(&user)
 	if err != nil {
@@ -79,7 +81,7 @@ func (s *ServerApi) createUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"uid": uid})
 }
 
-func (s *ServerApi) deleteUserByID(c *gin.Context) {
+func (s *API) deleteUserByID(c *gin.Context) {
 	id := c.Param("id")
 
 	err := s.uService.DeleteUser(id)
@@ -91,7 +93,7 @@ func (s *ServerApi) deleteUserByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Task deleted successfully"})
 }
 
-func (s *ServerApi) updateUserByID(c *gin.Context) {
+func (s *API) updateUserByID(c *gin.Context) {
 	id := c.Param("id")
 
 	var updatedUser models.User

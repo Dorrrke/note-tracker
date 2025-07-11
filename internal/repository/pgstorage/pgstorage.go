@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Dorrrke/note-tracker/internal/domain/models"
+	"github.com/Dorrrke/note-tracker/pkg/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -27,18 +28,19 @@ func NewPostgresStorage(dsn string) (*PostgresStorage, error) {
 }
 
 func RunMigrations(dsn string) error {
+	log := logger.Get()
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
 	}
 
 	if !db.Migrator().HasTable(&models.Task{}) || !db.Migrator().HasTable(&models.User{}) {
-		fmt.Println("Tables do not exist. Performing migration...")
-		if err := db.AutoMigrate(&models.User{}, &models.Task{}); err != nil {
+		log.Info().Msg("Tables do not exist. Performing migration...")
+		if err = db.AutoMigrate(&models.User{}, &models.Task{}); err != nil {
 			return fmt.Errorf("failed to migrate database: %w", err)
 		}
 	} else {
-		fmt.Println("Tables already exist. Skipping migration.")
+		log.Info().Msg("Tables already exist. Skipping migration.")
 	}
 	return nil
 }

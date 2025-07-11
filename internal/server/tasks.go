@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *ServerApi) getTasks(c *gin.Context) {
+func (s *API) getTasks(c *gin.Context) {
 	tasks, err := s.tService.GetTasks()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -16,7 +16,7 @@ func (s *ServerApi) getTasks(c *gin.Context) {
 	c.JSON(http.StatusOK, tasks)
 }
 
-func (s *ServerApi) createTask(c *gin.Context) {
+func (s *API) createTask(c *gin.Context) {
 	var task models.Task
 	if err := c.ShouldBindBodyWithJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -31,7 +31,7 @@ func (s *ServerApi) createTask(c *gin.Context) {
 	c.JSON(http.StatusCreated, task)
 }
 
-func (s *ServerApi) getTaskByID(c *gin.Context) {
+func (s *API) getTaskByID(c *gin.Context) {
 	id := c.Param("id")
 
 	task, err := s.tService.GetTask(id)
@@ -43,7 +43,7 @@ func (s *ServerApi) getTaskByID(c *gin.Context) {
 	c.JSON(http.StatusOK, task)
 }
 
-func (s *ServerApi) deleteTaskByID(c *gin.Context) {
+func (s *API) deleteTaskByID(c *gin.Context) {
 	id := c.Param("id")
 
 	err := s.tService.DeleteTask(id)
@@ -55,7 +55,7 @@ func (s *ServerApi) deleteTaskByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Task deleted successfully"})
 }
 
-func (s *ServerApi) updateTaskByID(c *gin.Context) {
+func (s *API) updateTaskByID(c *gin.Context) {
 	id := c.Param("id")
 
 	var updatedTask models.Task

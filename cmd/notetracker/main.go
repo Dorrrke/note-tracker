@@ -37,7 +37,7 @@ func main() {
 	server := server.New(*cfg, userService, taskService)
 	app := app.NewApp(*cfg, server, repo)
 
-	if err := app.StartApp(); err != nil {
+	if err = app.StartApp(); err != nil {
 		panic(err)
 	}
 }

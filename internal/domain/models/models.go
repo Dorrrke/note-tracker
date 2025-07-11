@@ -16,11 +16,11 @@ type User struct {
 	UID      string `json:"uid"`
 	Name     string `json:"name"`
 	Login    string `json:"login"`
-	Email    string `json:"email" validate:"required,email"`
+	Email    string `json:"email"    validate:"required,email"`
 	Password string `json:"password" validate:"required,min=6,max=50"`
 }
 
 type UserRequest struct {
-	Login    string `json:"login" validate:"required,min=3,max=50"`
+	Login    string `json:"login"    validate:"required,min=3,max=50"`
 	Password string `json:"password" validate:"required,min=6,max=50"`
 }

@@ -2,31 +2,17 @@ package logger
 
 import (
 	"os"
-	"strconv"
 	"sync"
 
 	"github.com/rs/zerolog"
 )
 
-var logger zerolog.Logger
+var logger zerolog.Logger //nolint:gochecknoglobals //singltone
 
-var once sync.Once
+var once sync.Once //nolint:gochecknoglobals //singltone
 
 func Get(flags ...bool) zerolog.Logger {
 	once.Do(func() {
-		zerolog.TimestampFieldName = "time"
-		zerolog.LevelFieldName = "level"
-		zerolog.CallerMarshalFunc = func(pc uintptr, file string, line int) string {
-			short := file
-			for i := len(file) - 1; i > 0; i-- {
-				if file[i] == '/' {
-					short = file[i+1:]
-					break
-				}
-			}
-			file = short
-			return file + ":" + strconv.Itoa(line)
-		}
 		if flags[0] {
 			logger = zerolog.New(os.Stdout).
 				Level(zerolog.DebugLevel).
@@ -34,7 +20,17 @@ func Get(flags ...bool) zerolog.Logger {
 				Timestamp().
 				Caller().
 				Logger().
-				Output(zerolog.ConsoleWriter{Out: os.Stdout})
+				Output(
+					zerolog.ConsoleWriter{
+						Out:        os.Stderr,
+						TimeFormat: "2006-01-02 15:04:05",
+						PartsOrder: []string{
+							"level",
+							"time",
+							"caller",
+							"message",
+						},
+					})
 		} else {
 			logger = zerolog.New(os.Stdout).
 				Level(zerolog.InfoLevel).

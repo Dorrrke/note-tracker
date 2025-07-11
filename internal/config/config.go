@@ -12,14 +12,12 @@ type Config struct {
 	Port  int
 	Debug bool
 	DBDSN string
-	// MigratePath string
 }
 
 const (
 	defaultPort  = 8080
 	defaultHost  = "localhost"
 	defaultDBDSN = "postgres://user:password@db:5432/note_tracker?sslmode=disable"
-	// defaultMigratePath = "migrations"
 )
 
 func ReadConfig() (*Config, error) {
@@ -29,7 +27,6 @@ func ReadConfig() (*Config, error) {
 	flag.IntVar(&cfg.Port, "port", defaultPort, "flag for explicit server port specifications")
 	flag.BoolVar(&cfg.Debug, "debug", false, "flag for explicit debug mode")
 	flag.StringVar(&cfg.DBDSN, "db", defaultDBDSN, "flag for explicit database specifications")
-	// flag.StringVar(&cfg.MigratePath, "migrate", defaultMigratePath, "flag for explicit migrate path specifications")
 
 	flag.Parse()
 
@@ -54,5 +51,4 @@ func ReadConfig() (*Config, error) {
 	// }
 
 	return &cfg, nil
-
 }
