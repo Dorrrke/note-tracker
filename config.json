@@ -1,0 +1,6 @@
+{
+  "Host": "0.0.0.0",
+  "Port": 8088,
+  "Debug": true,
+  "DBDSN": "postgres://dev_user:dev_pass@localhost:5432/dev_db?sslmode=disable"
+}
