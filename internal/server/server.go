@@ -16,6 +16,9 @@ const readHeaderTimeout = 5
 const writeTimeout = 10
 const idleTimeout = 30
 
+// API представляет собой основной серверный компонент приложения,
+// который объединяет маршрутизацию, сервисы пользователей и задач,
+// а также настройки HTTP-сервера.
 type API struct {
 	server   *http.Server
 	valid    *validator.Validate
@@ -23,6 +26,18 @@ type API struct {
 	tService *service.TaskService
 }
 
+// New создаёт и инициализирует новый экземпляр API.
+//
+// Принимает конфигурацию приложения, а также сервисы для работы с пользователями и задачами.
+// Возвращает указатель на структуру API.
+//
+// Параметры:
+//   - cfg: конфигурация хоста и порта сервера
+//   - uService: сервис управления пользователями
+//   - tService: сервис управления задачами
+//
+// Возвращает:
+//   - *API: инициализированный экземпляр сервера
 func New(cfg config.Config, uService *service.UserService, tService *service.TaskService) *API {
 	server := http.Server{
 		Addr:              fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
@@ -38,6 +53,10 @@ func New(cfg config.Config, uService *service.UserService, tService *service.Tas
 	}
 }
 
+// configRoutes настраивает все маршруты HTTP-запросов для приложения.
+//
+// Регистрирует обработчики для задач и пользователей.
+// Маршрутизатор Gin устанавливается как обработчик HTTP-сервера.
 func (s *API) configRoutes() {
 	// Task routers
 	router := gin.Default()
@@ -67,6 +86,13 @@ func (s *API) configRoutes() {
 	s.server.Handler = router
 }
 
+// Start запускает HTTP-сервер и начинает прослушивание входящих запросов.
+//
+// Вызывает configRoutes для настройки маршрутов перед запуском.
+// Возвращает ошибку, если сервер не смог стартовать (например, из-за занятого порта).
+//
+// Возвращает:
+//   - error: ошибка запуска сервера, если возникла
 func (s *API) Start() error {
 	s.configRoutes()
 	// log := logger.Get()
